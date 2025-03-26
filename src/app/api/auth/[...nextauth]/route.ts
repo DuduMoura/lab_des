@@ -61,6 +61,10 @@ export const authOptions = {
     },
     async session({ session, token }: { session: Session; token: JWT }) {
       session.user = token.user as { name?: string | null; email?: string | null; image?: string | null };
+      let existingUser = await prisma.user.findUnique({
+        where: { email: token.user.email },
+      });
+      session.user.id = existingUser.id
       return session;
     },
   },

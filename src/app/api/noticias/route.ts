@@ -28,12 +28,13 @@ export async function POST(req: NextRequest) {
             status: 400
         })
     }
+    console.log(session)
 
     const postagem = await prisma.postagem.create({
         data: {
             titulo: data.titulo,
             conteudo: data.conteudo,
-            usuario_id: session?.user.id
+            usuario_id: Number(session?.user.id)
         }
     })
 
