@@ -3,16 +3,18 @@ import { stringify } from "querystring";
 import { json } from "stream/consumers";
 
 async function getNoticias() {
-    const res = await fetch('/api/noticias')
+    const res = await fetch('/api/tarefas')
     if (!res.ok) {
         throw new Error("Erro na busca de noticias")
     }
     return res.json();
 }
 
-async function updateNoticia(data: any) {
-    const res = await fetch('/api/noticias')
-    if (!res.ok || !data.sucesso) {
+async function marcarOuDesmarcar(id: number) {
+    const res = await fetch(`/api/tarefas/${id}/marcar-desmarcar`, {
+        method: 'PUT'
+    })
+    if (!res.ok) {
         throw new Error("Erro na busca de noticias")
     }
     return res.json();
@@ -27,9 +29,9 @@ export function useNoticias() {
   }
 
   
-export function useUpdateNoticias() {
+export function useMarcarDesmarcar() {
     return useMutation({
-        mutationFn: (data) => updateNoticia(data)
+        mutationFn: ({ id }: any) => marcarOuDesmarcar(id)
     });
   }
 
@@ -40,7 +42,7 @@ export function useCreateNoticia() {
 }
 
 async function createNoticia(data: any) {
-    const res = await fetch('/api/noticias', {
+    const res = await fetch('/api/tarefas', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -60,7 +62,7 @@ export function useDeleteNoticia() {
 }
 
 async function deleteNoticia(id: number) {
-    const res = await fetch(`/api/noticias/${id}`, {
+    const res = await fetch(`/api/tarefas/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'

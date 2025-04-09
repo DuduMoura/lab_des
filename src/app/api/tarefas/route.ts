@@ -4,8 +4,8 @@ import { prisma } from "../../lib/prisma";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 
-export async function GET(req: NextRequest, { params }) {
-    const postagens = await prisma.postagem.findMany({
+export async function GET(req: NextRequest) {
+    const registros = await prisma.tarefas.findMany({
         include: {
             usuario: {
                 select: {
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest, { params }) {
             }
         }
     })
-    return NextResponse.json(postagens)
+    return NextResponse.json(registros)
 }
 
 export async function POST(req: NextRequest) {
@@ -28,15 +28,16 @@ export async function POST(req: NextRequest) {
             status: 400
         })
     }
-    console.log(session)
+    const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+      });
 
-    const postagem = await prisma.postagem.create({
+    const registro = await prisma.tarefas.create({
         data: {
             titulo: data.titulo,
-            conteudo: data.conteudo,
-            usuario_id: Number(session?.user.id)
+            usuario_id: Number(user.id)
         }
     })
 
-    return NextResponse.json(postagem)
+    return NextResponse.json(registro)
 }

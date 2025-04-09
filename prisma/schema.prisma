@@ -8,34 +8,41 @@ generator client {
   provider = "prisma-client-js"
 }
 
-/*
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-*/
 
+
+/**
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
 }
+ */
 
 model User {
-  id        Int        @id @default(autoincrement())
-  email     String     @unique
-  nome      String?
-  criado_em DateTime   @default(now())
-  Postagem  Postagem[]
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  nome           String?
+  foto           String?
+  dt_criacao     DateTime  @default(now())
+  dt_atualizacao DateTime  @updatedAt
+  dt_delecao     DateTime?
+  Tarefas        Tarefas[]
 
   @@map("users")
 }
 
-model Postagem {
-  id         Int     @id @default(autoincrement())
-  titulo     String
-  conteudo   String?
-  usuario_id Int
-  usuario    User?   @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+model Tarefas {
+  id             Int       @id @default(autoincrement())
+  titulo         String
+  concluido      Boolean   @default(false)
+  dt_criacao     DateTime  @default(now())
+  dt_atualizacao DateTime  @updatedAt
+  dt_delecao     DateTime?
+  usuario_id     Int
+  usuario        User?     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 
-  @@map("postagens")
+  @@map("tarefas")
 }
